@@ -23,11 +23,13 @@ def render_trends() -> None:
         data = []
         for r in recent:
             if r.analyzed_at:
-                data.append({
-                    "date": r.analyzed_at.date(),
-                    "sentiment": r.sentiment_score.compound,
-                    "bias": r.source_bias.value if r.source_bias else "unknown",
-                })
+                data.append(
+                    {
+                        "date": r.analyzed_at.date(),
+                        "sentiment": r.sentiment_score.compound,
+                        "bias": r.source_bias.value if r.source_bias else "unknown",
+                    }
+                )
 
         if data:
             df = pd.DataFrame(data)

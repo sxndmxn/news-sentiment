@@ -37,9 +37,7 @@ class AnalysisPipeline:
             detect_loaded_language: Whether to detect loaded language
         """
         self.analyzer: BaseAnalyzer = AnalyzerFactory.create(analyzer_name)
-        self.loaded_language_detector = (
-            LoadedLanguageDetector() if detect_loaded_language else None
-        )
+        self.loaded_language_detector = LoadedLanguageDetector() if detect_loaded_language else None
         self._detect_loaded_language = detect_loaded_language
 
     def analyze_article(self, article: Article) -> SentimentResult:
@@ -80,7 +78,7 @@ class AnalysisPipeline:
 
         except Exception as e:
             logger.error(f"Analysis failed for article {article.id}: {e}")
-            raise AnalysisFailedError(article.id, str(e))
+            raise AnalysisFailedError(article.id, str(e)) from e
 
     def analyze_batch(
         self,

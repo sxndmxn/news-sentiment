@@ -28,9 +28,7 @@ class ProcessingStep:
         """Mark step as completed."""
         self.completed_at = datetime.utcnow()
         if self.completed_at and self.started_at:
-            self.duration_ms = int(
-                (self.completed_at - self.started_at).total_seconds() * 1000
-            )
+            self.duration_ms = int((self.completed_at - self.started_at).total_seconds() * 1000)
         if output_size is not None:
             self.output_size = output_size
 

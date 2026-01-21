@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timedelta
+from collections.abc import Callable
+from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 from tenacity import (
     RetryError,
@@ -107,9 +108,7 @@ class CircuitBreaker:
 
         if self._failure_count >= self.failure_threshold:
             if self._state != CircuitState.OPEN:
-                logger.warning(
-                    f"Circuit '{self.name}' OPEN after {self._failure_count} failures"
-                )
+                logger.warning(f"Circuit '{self.name}' OPEN after {self._failure_count} failures")
             self._state = CircuitState.OPEN
 
     def call(self, func: Callable[[], T]) -> T:
@@ -154,10 +153,10 @@ class CircuitBreaker:
             self._record_failure()
             # Re-raise the underlying exception
             if e.last_attempt.exception():
-                raise e.last_attempt.exception()
+                raise e.last_attempt.exception() from e
             raise
 
-        except Exception as e:
+        except Exception:
             self._record_failure()
             raise
 
@@ -175,8 +174,12 @@ class CircuitBreaker:
             "state": self.state.value,
             "failure_count": self._failure_count,
             "failure_threshold": self.failure_threshold,
-            "last_failure": self._last_failure_time.isoformat() if self._last_failure_time else None,
-            "last_success": self._last_success_time.isoformat() if self._last_success_time else None,
+            "last_failure": self._last_failure_time.isoformat()
+            if self._last_failure_time
+            else None,
+            "last_success": self._last_success_time.isoformat()
+            if self._last_success_time
+            else None,
             "recovery_timeout_seconds": self.recovery_timeout,
         }
 
@@ -225,8 +228,7 @@ class CircuitBreakerRegistry:
     def get_open_circuits(self) -> list[str]:
         """Get names of all open circuits."""
         return [
-            name for name, breaker in self._breakers.items()
-            if breaker.state == CircuitState.OPEN
+            name for name, breaker in self._breakers.items() if breaker.state == CircuitState.OPEN
         ]
 
 

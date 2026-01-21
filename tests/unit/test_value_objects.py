@@ -1,5 +1,6 @@
 """Tests for domain value objects."""
 
+import pydantic
 import pytest
 
 from news_sentiment.domain.value_objects import (
@@ -90,7 +91,7 @@ class TestSentimentScore:
     def test_immutability(self) -> None:
         """Test score is immutable."""
         score = SentimentScore(compound=0.5, positive=0.6, negative=0.1, neutral=0.3)
-        with pytest.raises(Exception):  # ValidationError for frozen model
+        with pytest.raises(pydantic.ValidationError):  # Frozen model raises ValidationError
             score.compound = 0.0  # type: ignore
 
     def test_validation_bounds(self) -> None:

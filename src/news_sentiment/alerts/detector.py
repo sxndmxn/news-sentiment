@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime
 from enum import Enum
 from typing import TYPE_CHECKING
 
@@ -150,7 +150,7 @@ class AlertDetector:
         alerts = []
 
         # Compare recent sentiment to baseline
-        hours = rule.lookback_hours
+        _ = rule.lookback_hours  # Reserved for future hourly granularity
         recent = self.sentiment_repo.get_average_sentiment(days=1)
         baseline = self.sentiment_repo.get_average_sentiment(days=7)
 
@@ -160,21 +160,25 @@ class AlertDetector:
         change = recent - baseline
 
         if positive and change >= rule.threshold:
-            alerts.append(Alert(
-                alert_type=AlertType.SENTIMENT_SPIKE,
-                level=rule.level,
-                message=f"Sentiment increased by {change:.3f} (threshold: {rule.threshold})",
-                value=change,
-                threshold=rule.threshold,
-            ))
+            alerts.append(
+                Alert(
+                    alert_type=AlertType.SENTIMENT_SPIKE,
+                    level=rule.level,
+                    message=f"Sentiment increased by {change:.3f} (threshold: {rule.threshold})",
+                    value=change,
+                    threshold=rule.threshold,
+                )
+            )
         elif not positive and change <= -abs(rule.threshold):
-            alerts.append(Alert(
-                alert_type=AlertType.SENTIMENT_DROP,
-                level=rule.level,
-                message=f"Sentiment decreased by {abs(change):.3f} (threshold: {rule.threshold})",
-                value=change,
-                threshold=-abs(rule.threshold),
-            ))
+            alerts.append(
+                Alert(
+                    alert_type=AlertType.SENTIMENT_DROP,
+                    level=rule.level,
+                    message=f"Sentiment decreased by {abs(change):.3f} (threshold: {rule.threshold})",
+                    value=change,
+                    threshold=-abs(rule.threshold),
+                )
+            )
 
         return alerts
 
@@ -191,13 +195,15 @@ class AlertDetector:
         negative_ratio = distribution["negative"] / total
 
         if negative_ratio >= rule.threshold:
-            alerts.append(Alert(
-                alert_type=AlertType.HIGH_NEGATIVITY,
-                level=rule.level,
-                message=f"High negativity: {negative_ratio:.1%} of articles are negative",
-                value=negative_ratio,
-                threshold=rule.threshold,
-            ))
+            alerts.append(
+                Alert(
+                    alert_type=AlertType.HIGH_NEGATIVITY,
+                    level=rule.level,
+                    message=f"High negativity: {negative_ratio:.1%} of articles are negative",
+                    value=negative_ratio,
+                    threshold=rule.threshold,
+                )
+            )
 
         return alerts
 
@@ -214,13 +220,15 @@ class AlertDetector:
         divergence = abs(left_avg - right_avg)
 
         if divergence >= rule.threshold:
-            alerts.append(Alert(
-                alert_type=AlertType.BIAS_DIVERGENCE,
-                level=rule.level,
-                message=f"Sentiment divergence between left ({left_avg:.3f}) and right ({right_avg:.3f}): {divergence:.3f}",
-                value=divergence,
-                threshold=rule.threshold,
-            ))
+            alerts.append(
+                Alert(
+                    alert_type=AlertType.BIAS_DIVERGENCE,
+                    level=rule.level,
+                    message=f"Sentiment divergence between left ({left_avg:.3f}) and right ({right_avg:.3f}): {divergence:.3f}",
+                    value=divergence,
+                    threshold=rule.threshold,
+                )
+            )
 
         return alerts
 
@@ -231,13 +239,15 @@ class AlertDetector:
         recent = self.sentiment_repo.list_recent(days=1, limit=1)
 
         if not recent:
-            alerts.append(Alert(
-                alert_type=AlertType.NO_DATA,
-                level=rule.level,
-                message="No articles analyzed in the last 24 hours",
-                value=0,
-                threshold=rule.threshold,
-            ))
+            alerts.append(
+                Alert(
+                    alert_type=AlertType.NO_DATA,
+                    level=rule.level,
+                    message="No articles analyzed in the last 24 hours",
+                    value=0,
+                    threshold=rule.threshold,
+                )
+            )
 
         return alerts
 
@@ -261,13 +271,15 @@ class AlertDetector:
         avg_loaded = sum(loaded_ratios) / len(loaded_ratios)
 
         if avg_loaded >= rule.threshold:
-            alerts.append(Alert(
-                alert_type=AlertType.HIGH_LOADED_LANGUAGE,
-                level=rule.level,
-                message=f"High loaded language average: {avg_loaded:.1%}",
-                value=avg_loaded,
-                threshold=rule.threshold,
-            ))
+            alerts.append(
+                Alert(
+                    alert_type=AlertType.HIGH_LOADED_LANGUAGE,
+                    level=rule.level,
+                    message=f"High loaded language average: {avg_loaded:.1%}",
+                    value=avg_loaded,
+                    threshold=rule.threshold,
+                )
+            )
 
         return alerts
 

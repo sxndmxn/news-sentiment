@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import logging
 import statistics
-from collections import Counter
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING
 
@@ -18,7 +17,6 @@ from news_sentiment.storage.database import (
 )
 
 if TYPE_CHECKING:
-    from sqlalchemy import select
     from news_sentiment.storage.database import Database
 
 logger = logging.getLogger(__name__)
@@ -51,7 +49,7 @@ class Aggregator:
         Returns:
             DailySummary or None if no data
         """
-        from sqlalchemy import select, func
+        from sqlalchemy import select
 
         start_of_day = date.replace(hour=0, minute=0, second=0, microsecond=0)
         end_of_day = start_of_day + timedelta(days=1)
@@ -91,7 +89,11 @@ class Aggregator:
             loaded_ratios = []
             for r in results:
                 if r.total_words and r.total_words > 0:
-                    total_loaded = (r.hedges_count or 0) + (r.intensifiers_count or 0) + (r.weasel_words_count or 0)
+                    total_loaded = (
+                        (r.hedges_count or 0)
+                        + (r.intensifiers_count or 0)
+                        + (r.weasel_words_count or 0)
+                    )
                     loaded_ratios.append(total_loaded / r.total_words)
 
             avg_loaded_ratio = statistics.mean(loaded_ratios) if loaded_ratios else None
@@ -143,7 +145,9 @@ class Aggregator:
                 existing.negative_count = summary.negative_count
                 existing.neutral_count = summary.neutral_count
                 existing.avg_loaded_ratio = summary.avg_loaded_ratio
-                existing.top_entities = json.dumps(summary.top_entities) if summary.top_entities else None
+                existing.top_entities = (
+                    json.dumps(summary.top_entities) if summary.top_entities else None
+                )
                 session.flush()
             else:
                 row = DailySummaryTable(
@@ -187,7 +191,9 @@ class Aggregator:
         if overall:
             self.save_summary(overall)
             summaries.append(overall)
-            logger.info(f"Created overall summary for {date.date()}: {overall.article_count} articles")
+            logger.info(
+                f"Created overall summary for {date.date()}: {overall.article_count} articles"
+            )
 
         # Per-bias summaries
         for bias in BiasLabel:
@@ -195,7 +201,9 @@ class Aggregator:
             if bias_summary and bias_summary.article_count > 0:
                 self.save_summary(bias_summary)
                 summaries.append(bias_summary)
-                logger.info(f"Created {bias.value} summary for {date.date()}: {bias_summary.article_count} articles")
+                logger.info(
+                    f"Created {bias.value} summary for {date.date()}: {bias_summary.article_count} articles"
+                )
 
         return summaries
 

@@ -157,7 +157,7 @@ class SentenceEmbedder:
         if embeddings is None:
             return []
 
-        return [(a.id, emb) for a, emb in zip(articles, embeddings)]
+        return [(a.id, emb) for a, emb in zip(articles, embeddings, strict=True)]
 
     def compute_similarity(
         self,

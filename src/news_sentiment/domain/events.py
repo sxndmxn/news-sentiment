@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable
 from uuid import uuid4
 
 
@@ -99,6 +99,7 @@ class EventBus:
             except Exception as e:
                 # Log but don't fail on handler errors
                 import logging
+
                 logging.getLogger(__name__).error(
                     f"Error in event handler for {event.event_type}: {e}"
                 )

@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import streamlit as st
 
+from news_sentiment.domain.value_objects import BiasLabel
 from news_sentiment.storage.database import init_database
 from news_sentiment.storage.repositories.article_repo import ArticleRepository, SourceRepository
 from news_sentiment.storage.repositories.sentiment_repo import SentimentRepository
-from news_sentiment.domain.value_objects import BiasLabel
-
 
 # Page config
 st.set_page_config(
@@ -18,10 +17,12 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
 # Initialize database and repositories
 @st.cache_resource
 def get_db():
     return init_database()
+
 
 db = get_db()
 article_repo = ArticleRepository(db)
@@ -102,11 +103,14 @@ def show_overview() -> None:
         distribution = sentiment_repo.get_sentiment_distribution(days=7)
 
         import pandas as pd
-        df = pd.DataFrame([
-            {"Sentiment": "Positive", "Count": distribution["positive"]},
-            {"Sentiment": "Negative", "Count": distribution["negative"]},
-            {"Sentiment": "Neutral", "Count": distribution["neutral"]},
-        ])
+
+        df = pd.DataFrame(
+            [
+                {"Sentiment": "Positive", "Count": distribution["positive"]},
+                {"Sentiment": "Negative", "Count": distribution["negative"]},
+                {"Sentiment": "Neutral", "Count": distribution["neutral"]},
+            ]
+        )
         st.bar_chart(df.set_index("Sentiment"))
 
     with col2:
@@ -123,15 +127,20 @@ def show_overview() -> None:
     recent = sentiment_repo.list_recent(days=7, limit=10)
     if recent:
         import pandas as pd
+
         data = []
         for r in recent:
-            data.append({
-                "Title": (r.article_title or "")[:60],
-                "Sentiment": r.sentiment_score.sentiment_label,
-                "Score": f"{r.sentiment_score.compound:.3f}",
-                "Bias": r.source_bias.value.replace("_", " ").title() if r.source_bias else "-",
-                "Loaded %": f"{r.loaded_language.loaded_ratio:.1%}" if r.loaded_language else "-",
-            })
+            data.append(
+                {
+                    "Title": (r.article_title or "")[:60],
+                    "Sentiment": r.sentiment_score.sentiment_label,
+                    "Score": f"{r.sentiment_score.compound:.3f}",
+                    "Bias": r.source_bias.value.replace("_", " ").title() if r.source_bias else "-",
+                    "Loaded %": f"{r.loaded_language.loaded_ratio:.1%}"
+                    if r.loaded_language
+                    else "-",
+                }
+            )
         df = pd.DataFrame(data)
         st.dataframe(df, use_container_width=True, hide_index=True)
     else:
@@ -147,17 +156,18 @@ def show_trends() -> None:
     recent = sentiment_repo.list_recent(days=30, limit=100)
     if recent:
         import pandas as pd
-        from datetime import datetime
 
         # Group by date
         data = []
         for r in recent:
             if r.analyzed_at:
-                data.append({
-                    "date": r.analyzed_at.date(),
-                    "sentiment": r.sentiment_score.compound,
-                    "bias": r.source_bias.value if r.source_bias else "unknown",
-                })
+                data.append(
+                    {
+                        "date": r.analyzed_at.date(),
+                        "sentiment": r.sentiment_score.compound,
+                        "bias": r.source_bias.value if r.source_bias else "unknown",
+                    }
+                )
 
         if data:
             df = pd.DataFrame(data)
@@ -184,21 +194,24 @@ def show_sources() -> None:
 
     if sources:
         import pandas as pd
+
         data = []
         for src in sources:
             article_count = article_repo.count_by_source(src.id)
             analyzed_count = sentiment_repo.count_by_source(src.id)
             avg = sentiment_repo.get_average_sentiment(days=30, source_id=src.id)
 
-            data.append({
-                "Name": src.name,
-                "Slug": src.slug,
-                "Bias": src.bias_label.value.replace("_", " ").title(),
-                "Articles": article_count,
-                "Analyzed": analyzed_count,
-                "Avg Sentiment": f"{avg:.3f}" if avg is not None else "-",
-                "Active": "✓" if src.is_active else "✗",
-            })
+            data.append(
+                {
+                    "Name": src.name,
+                    "Slug": src.slug,
+                    "Bias": src.bias_label.value.replace("_", " ").title(),
+                    "Articles": article_count,
+                    "Analyzed": analyzed_count,
+                    "Avg Sentiment": f"{avg:.3f}" if avg is not None else "-",
+                    "Active": "✓" if src.is_active else "✗",
+                }
+            )
 
         df = pd.DataFrame(data)
         st.dataframe(df, use_container_width=True, hide_index=True)
@@ -245,19 +258,26 @@ def show_explorer() -> None:
 
     if articles:
         import pandas as pd
+
         data = []
         for article in articles:
             # Get sentiment if available
             sentiment = sentiment_repo.get_by_article_id(article.id)
 
-            data.append({
-                "Title": article.title[:80],
-                "Source": article.source_name or "-",
-                "Bias": article.source_bias.value.replace("_", " ").title() if article.source_bias else "-",
-                "Words": article.word_count,
-                "Sentiment": f"{sentiment.sentiment_score.compound:.3f}" if sentiment else "-",
-                "Published": article.published_at.strftime("%Y-%m-%d") if article.published_at else "-",
-            })
+            data.append(
+                {
+                    "Title": article.title[:80],
+                    "Source": article.source_name or "-",
+                    "Bias": article.source_bias.value.replace("_", " ").title()
+                    if article.source_bias
+                    else "-",
+                    "Words": article.word_count,
+                    "Sentiment": f"{sentiment.sentiment_score.compound:.3f}" if sentiment else "-",
+                    "Published": article.published_at.strftime("%Y-%m-%d")
+                    if article.published_at
+                    else "-",
+                }
+            )
 
         df = pd.DataFrame(data)
         st.dataframe(df, use_container_width=True, hide_index=True)
@@ -274,7 +294,11 @@ def show_explorer() -> None:
                 st.markdown(f"URL: {selected.url}")
 
                 with st.expander("Content Preview"):
-                    st.text(selected.content[:1000] + "..." if len(selected.content) > 1000 else selected.content)
+                    st.text(
+                        selected.content[:1000] + "..."
+                        if len(selected.content) > 1000
+                        else selected.content
+                    )
 
                 sentiment = sentiment_repo.get_by_article_id(selected.id)
                 if sentiment:

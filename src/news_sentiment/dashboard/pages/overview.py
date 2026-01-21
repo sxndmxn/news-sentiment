@@ -47,11 +47,14 @@ def render_overview() -> None:
         distribution = sentiment_repo.get_sentiment_distribution(days=7)
 
         import pandas as pd
-        df = pd.DataFrame([
-            {"Sentiment": "Positive", "Count": distribution["positive"]},
-            {"Sentiment": "Negative", "Count": distribution["negative"]},
-            {"Sentiment": "Neutral", "Count": distribution["neutral"]},
-        ])
+
+        df = pd.DataFrame(
+            [
+                {"Sentiment": "Positive", "Count": distribution["positive"]},
+                {"Sentiment": "Negative", "Count": distribution["negative"]},
+                {"Sentiment": "Neutral", "Count": distribution["neutral"]},
+            ]
+        )
         st.bar_chart(df.set_index("Sentiment"))
 
     with col2:
@@ -68,15 +71,20 @@ def render_overview() -> None:
     recent = sentiment_repo.list_recent(days=7, limit=10)
     if recent:
         import pandas as pd
+
         data = []
         for r in recent:
-            data.append({
-                "Title": (r.article_title or "")[:60],
-                "Sentiment": r.sentiment_score.sentiment_label,
-                "Score": f"{r.sentiment_score.compound:.3f}",
-                "Bias": r.source_bias.value.replace("_", " ").title() if r.source_bias else "-",
-                "Loaded %": f"{r.loaded_language.loaded_ratio:.1%}" if r.loaded_language else "-",
-            })
+            data.append(
+                {
+                    "Title": (r.article_title or "")[:60],
+                    "Sentiment": r.sentiment_score.sentiment_label,
+                    "Score": f"{r.sentiment_score.compound:.3f}",
+                    "Bias": r.source_bias.value.replace("_", " ").title() if r.source_bias else "-",
+                    "Loaded %": f"{r.loaded_language.loaded_ratio:.1%}"
+                    if r.loaded_language
+                    else "-",
+                }
+            )
         df = pd.DataFrame(data)
         st.dataframe(df, use_container_width=True, hide_index=True)
     else:

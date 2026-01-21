@@ -5,8 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import select, func
-from sqlalchemy.orm import Session
+from sqlalchemy import func, select
 
 from news_sentiment.domain.exceptions import ArticleNotFoundError, DuplicateArticleError
 from news_sentiment.domain.models import Article, Source
@@ -179,9 +178,7 @@ class ArticleRepository:
             query = select(ArticleTable).order_by(ArticleTable.fetched_at.desc())
 
             if days > 0:
-                cutoff = datetime.utcnow().replace(
-                    hour=0, minute=0, second=0, microsecond=0
-                )
+                cutoff = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
                 from datetime import timedelta
 
                 cutoff = cutoff - timedelta(days=days)
@@ -236,9 +233,7 @@ class ArticleRepository:
     def count_total(self) -> int:
         """Count total articles in database."""
         with self.db.session() as session:
-            result = session.execute(
-                select(func.count()).select_from(ArticleTable)
-            ).scalar()
+            result = session.execute(select(func.count()).select_from(ArticleTable)).scalar()
             return result or 0
 
 
@@ -322,46 +317,48 @@ class SourceRepository:
     def list_active(self) -> list[Source]:
         """List all active sources."""
         with self.db.session() as session:
-            rows = session.execute(
-                select(SourceTable)
-                .where(SourceTable.is_active == True)  # noqa: E712
-                .order_by(SourceTable.name)
-            ).scalars().all()
+            rows = (
+                session.execute(
+                    select(SourceTable)
+                    .where(SourceTable.is_active == True)  # noqa: E712
+                    .order_by(SourceTable.name)
+                )
+                .scalars()
+                .all()
+            )
             return [self._to_domain(row) for row in rows]
 
     def list_all(self) -> list[Source]:
         """List all sources."""
         with self.db.session() as session:
-            rows = session.execute(
-                select(SourceTable).order_by(SourceTable.name)
-            ).scalars().all()
+            rows = session.execute(select(SourceTable).order_by(SourceTable.name)).scalars().all()
             return [self._to_domain(row) for row in rows]
 
     def list_by_bias(self, bias: BiasLabel) -> list[Source]:
         """List sources by bias label."""
         with self.db.session() as session:
-            rows = session.execute(
-                select(SourceTable)
-                .where(SourceTable.bias_label == bias.value)
-                .where(SourceTable.is_active == True)  # noqa: E712
-                .order_by(SourceTable.name)
-            ).scalars().all()
+            rows = (
+                session.execute(
+                    select(SourceTable)
+                    .where(SourceTable.bias_label == bias.value)
+                    .where(SourceTable.is_active == True)  # noqa: E712
+                    .order_by(SourceTable.name)
+                )
+                .scalars()
+                .all()
+            )
             return [self._to_domain(row) for row in rows]
 
     def count_total(self) -> int:
         """Count total sources."""
         with self.db.session() as session:
-            result = session.execute(
-                select(func.count()).select_from(SourceTable)
-            ).scalar()
+            result = session.execute(select(func.count()).select_from(SourceTable)).scalar()
             return result or 0
 
     def count_active(self) -> int:
         """Count active sources."""
         with self.db.session() as session:
             result = session.execute(
-                select(func.count())
-                .select_from(SourceTable)
-                .where(SourceTable.is_active == True)  # noqa: E712
+                select(func.count()).select_from(SourceTable).where(SourceTable.is_active == True)  # noqa: E712
             ).scalar()
             return result or 0

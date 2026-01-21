@@ -20,21 +20,24 @@ def render_sources() -> None:
 
     if sources:
         import pandas as pd
+
         data = []
         for src in sources:
             article_count = article_repo.count_by_source(src.id)
             analyzed_count = sentiment_repo.count_by_source(src.id)
             avg = sentiment_repo.get_average_sentiment(days=30, source_id=src.id)
 
-            data.append({
-                "Name": src.name,
-                "Slug": src.slug,
-                "Bias": src.bias_label.value.replace("_", " ").title(),
-                "Articles": article_count,
-                "Analyzed": analyzed_count,
-                "Avg Sentiment": f"{avg:.3f}" if avg is not None else "-",
-                "Active": "✓" if src.is_active else "✗",
-            })
+            data.append(
+                {
+                    "Name": src.name,
+                    "Slug": src.slug,
+                    "Bias": src.bias_label.value.replace("_", " ").title(),
+                    "Articles": article_count,
+                    "Analyzed": analyzed_count,
+                    "Avg Sentiment": f"{avg:.3f}" if avg is not None else "-",
+                    "Active": "✓" if src.is_active else "✗",
+                }
+            )
 
         df = pd.DataFrame(data)
         st.dataframe(df, use_container_width=True, hide_index=True)

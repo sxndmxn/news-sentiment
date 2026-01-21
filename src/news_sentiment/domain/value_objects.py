@@ -31,7 +31,7 @@ class BiasLabel(str, Enum):
             for member in cls:
                 if member.name.lower() == normalized:
                     return member
-            raise ValueError(f"Unknown bias label: {value}")
+            raise ValueError(f"Unknown bias label: {value}") from None
 
 
 class SentimentScore(BaseModel):
@@ -81,7 +81,7 @@ class ContentHash(BaseModel):
         try:
             int(v, 16)
         except ValueError:
-            raise ValueError("Hash must be a valid hexadecimal string")
+            raise ValueError("Hash must be a valid hexadecimal string") from None
         return v.lower()
 
     @classmethod

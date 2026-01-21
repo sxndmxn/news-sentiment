@@ -105,8 +105,7 @@ class TestGetEmbedder:
 
 
 @pytest.mark.skipif(
-    not SentenceEmbedder().is_available,
-    reason="sentence-transformers not installed"
+    not SentenceEmbedder().is_available, reason="sentence-transformers not installed"
 )
 class TestSentenceEmbedderWithModel:
     """Tests that require the actual model to be loaded."""

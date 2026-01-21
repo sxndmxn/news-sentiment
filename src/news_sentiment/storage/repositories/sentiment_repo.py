@@ -149,9 +149,7 @@ class SentimentRepository:
         """Get sentiment result for an article."""
         with self.db.session() as session:
             row = session.execute(
-                select(SentimentResultTable).where(
-                    SentimentResultTable.article_id == article_id
-                )
+                select(SentimentResultTable).where(SentimentResultTable.article_id == article_id)
             ).scalar_one_or_none()
             return self._to_domain(row) if row else None
 
@@ -164,9 +162,7 @@ class SentimentRepository:
     ) -> list[SentimentResult]:
         """List recent sentiment results."""
         with self.db.session() as session:
-            query = select(SentimentResultTable).order_by(
-                SentimentResultTable.analyzed_at.desc()
-            )
+            query = select(SentimentResultTable).order_by(SentimentResultTable.analyzed_at.desc())
 
             if days > 0:
                 cutoff = datetime.utcnow() - timedelta(days=days)

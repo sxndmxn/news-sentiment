@@ -43,7 +43,7 @@ class SourceRegistry:
             with open(self.config_path) as f:
                 self._config = yaml.safe_load(f)
         except yaml.YAMLError as e:
-            raise ConfigurationError(f"Invalid YAML in {self.config_path}: {e}")
+            raise ConfigurationError(f"Invalid YAML in {self.config_path}: {e}") from e
 
         if not self._config or "sources" not in self._config:
             raise ConfigurationError(f"No 'sources' key in {self.config_path}")
@@ -73,7 +73,7 @@ class SourceRegistry:
             except (KeyError, ValueError) as e:
                 raise ConfigurationError(
                     f"Invalid source configuration for '{source_data.get('slug', 'unknown')}': {e}"
-                )
+                ) from e
 
         return self._sources
 
@@ -99,21 +99,27 @@ class SourceRegistry:
     def get_ingestion_settings(self) -> dict:
         """Get ingestion settings from config."""
         config = self._load_config()
-        return config.get("ingestion", {
-            "max_articles_per_source": 50,
-            "min_content_length": 100,
-            "max_content_length": 100000,
-            "fetch_interval_minutes": 60,
-        })
+        return config.get(
+            "ingestion",
+            {
+                "max_articles_per_source": 50,
+                "min_content_length": 100,
+                "max_content_length": 100000,
+                "fetch_interval_minutes": 60,
+            },
+        )
 
     def get_health_check_settings(self) -> dict:
         """Get health check settings from config."""
         config = self._load_config()
-        return config.get("health_check", {
-            "timeout_seconds": 30,
-            "retry_attempts": 3,
-            "retry_delay_seconds": 5,
-        })
+        return config.get(
+            "health_check",
+            {
+                "timeout_seconds": 30,
+                "retry_attempts": 3,
+                "retry_delay_seconds": 5,
+            },
+        )
 
     def reload(self) -> None:
         """Reload configuration from disk."""

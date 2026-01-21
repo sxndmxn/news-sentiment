@@ -38,19 +38,26 @@ def render_explorer() -> None:
 
     if articles:
         import pandas as pd
+
         data = []
         for article in articles:
             # Get sentiment if available
             sentiment = sentiment_repo.get_by_article_id(article.id)
 
-            data.append({
-                "Title": article.title[:80],
-                "Source": article.source_name or "-",
-                "Bias": article.source_bias.value.replace("_", " ").title() if article.source_bias else "-",
-                "Words": article.word_count,
-                "Sentiment": f"{sentiment.sentiment_score.compound:.3f}" if sentiment else "-",
-                "Published": article.published_at.strftime("%Y-%m-%d") if article.published_at else "-",
-            })
+            data.append(
+                {
+                    "Title": article.title[:80],
+                    "Source": article.source_name or "-",
+                    "Bias": article.source_bias.value.replace("_", " ").title()
+                    if article.source_bias
+                    else "-",
+                    "Words": article.word_count,
+                    "Sentiment": f"{sentiment.sentiment_score.compound:.3f}" if sentiment else "-",
+                    "Published": article.published_at.strftime("%Y-%m-%d")
+                    if article.published_at
+                    else "-",
+                }
+            )
 
         df = pd.DataFrame(data)
         st.dataframe(df, use_container_width=True, hide_index=True)
@@ -58,7 +65,9 @@ def render_explorer() -> None:
         # Article detail view
         st.subheader("Article Detail")
         titles = [a.title[:80] for a in articles]
-        selected_idx = st.selectbox("Select article", range(len(titles)), format_func=lambda i: titles[i])
+        selected_idx = st.selectbox(
+            "Select article", range(len(titles)), format_func=lambda i: titles[i]
+        )
 
         if selected_idx is not None:
             selected = articles[selected_idx]

@@ -138,17 +138,19 @@ class Exporter:
         ]
 
         if include_sentiment:
-            fieldnames.extend([
-                "sentiment_compound",
-                "sentiment_positive",
-                "sentiment_negative",
-                "sentiment_neutral",
-                "sentiment_label",
-                "loaded_hedges",
-                "loaded_intensifiers",
-                "loaded_weasel_words",
-                "loaded_ratio",
-            ])
+            fieldnames.extend(
+                [
+                    "sentiment_compound",
+                    "sentiment_positive",
+                    "sentiment_negative",
+                    "sentiment_neutral",
+                    "sentiment_label",
+                    "loaded_hedges",
+                    "loaded_intensifiers",
+                    "loaded_weasel_words",
+                    "loaded_ratio",
+                ]
+            )
 
         with open(output_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -161,7 +163,9 @@ class Exporter:
                     "url": article.url,
                     "source_name": article.source_name,
                     "source_bias": article.source_bias.value if article.source_bias else "",
-                    "published_at": article.published_at.isoformat() if article.published_at else "",
+                    "published_at": article.published_at.isoformat()
+                    if article.published_at
+                    else "",
                     "fetched_at": article.fetched_at.isoformat() if article.fetched_at else "",
                     "word_count": article.word_count,
                 }
@@ -169,20 +173,24 @@ class Exporter:
                 if include_sentiment:
                     sentiment = self.sentiment_repo.get_by_article_id(article.id)
                     if sentiment:
-                        row.update({
-                            "sentiment_compound": sentiment.sentiment_score.compound,
-                            "sentiment_positive": sentiment.sentiment_score.positive,
-                            "sentiment_negative": sentiment.sentiment_score.negative,
-                            "sentiment_neutral": sentiment.sentiment_score.neutral,
-                            "sentiment_label": sentiment.sentiment_score.sentiment_label,
-                        })
+                        row.update(
+                            {
+                                "sentiment_compound": sentiment.sentiment_score.compound,
+                                "sentiment_positive": sentiment.sentiment_score.positive,
+                                "sentiment_negative": sentiment.sentiment_score.negative,
+                                "sentiment_neutral": sentiment.sentiment_score.neutral,
+                                "sentiment_label": sentiment.sentiment_score.sentiment_label,
+                            }
+                        )
                         if sentiment.loaded_language:
-                            row.update({
-                                "loaded_hedges": sentiment.loaded_language.hedges_count,
-                                "loaded_intensifiers": sentiment.loaded_language.intensifiers_count,
-                                "loaded_weasel_words": sentiment.loaded_language.weasel_words_count,
-                                "loaded_ratio": sentiment.loaded_language.loaded_ratio,
-                            })
+                            row.update(
+                                {
+                                    "loaded_hedges": sentiment.loaded_language.hedges_count,
+                                    "loaded_intensifiers": sentiment.loaded_language.intensifiers_count,
+                                    "loaded_weasel_words": sentiment.loaded_language.weasel_words_count,
+                                    "loaded_ratio": sentiment.loaded_language.loaded_ratio,
+                                }
+                            )
 
                 writer.writerow(row)
 

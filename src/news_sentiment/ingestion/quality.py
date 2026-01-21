@@ -9,7 +9,6 @@ from typing import Protocol
 from news_sentiment.domain.exceptions import (
     ContentTooShortError,
     InvalidLanguageError,
-    QualityError,
 )
 
 
@@ -67,10 +66,46 @@ class LanguageValidator:
 
     # Common English words for basic detection
     ENGLISH_MARKERS = {
-        "the", "be", "to", "of", "and", "a", "in", "that", "have", "i",
-        "it", "for", "not", "on", "with", "he", "as", "you", "do", "at",
-        "this", "but", "his", "by", "from", "they", "we", "say", "her", "she",
-        "or", "an", "will", "my", "one", "all", "would", "there", "their", "what",
+        "the",
+        "be",
+        "to",
+        "of",
+        "and",
+        "a",
+        "in",
+        "that",
+        "have",
+        "i",
+        "it",
+        "for",
+        "not",
+        "on",
+        "with",
+        "he",
+        "as",
+        "you",
+        "do",
+        "at",
+        "this",
+        "but",
+        "his",
+        "by",
+        "from",
+        "they",
+        "we",
+        "say",
+        "her",
+        "she",
+        "or",
+        "an",
+        "will",
+        "my",
+        "one",
+        "all",
+        "would",
+        "there",
+        "their",
+        "what",
     }
 
     def __init__(self, expected_language: str = "en", threshold: float = 0.1):

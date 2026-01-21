@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 import signal
 import sys
-from datetime import datetime
 from typing import TYPE_CHECKING
 
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -110,12 +109,14 @@ class SchedulerRunner:
         """Get status of all scheduled jobs."""
         jobs = []
         for job in self.scheduler.get_jobs():
-            jobs.append({
-                "id": job.id,
-                "name": job.name,
-                "next_run": job.next_run_time.isoformat() if job.next_run_time else None,
-                "trigger": str(job.trigger),
-            })
+            jobs.append(
+                {
+                    "id": job.id,
+                    "name": job.name,
+                    "next_run": job.next_run_time.isoformat() if job.next_run_time else None,
+                    "trigger": str(job.trigger),
+                }
+            )
         return jobs
 
     @property
@@ -156,6 +157,7 @@ def run_scheduler() -> None:
     try:
         while runner.is_running:
             import time
+
             time.sleep(60)
     except (KeyboardInterrupt, SystemExit):
         runner.stop()

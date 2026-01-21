@@ -52,8 +52,7 @@ class VectorStore:
                 self._available = True
             except ImportError:
                 logger.warning(
-                    "chromadb not installed. "
-                    "Install with: pip install news-sentiment[vector]"
+                    "chromadb not installed. Install with: pip install news-sentiment[vector]"
                 )
                 self._available = False
         return self._available
@@ -183,12 +182,18 @@ class VectorStore:
             output = []
             if results["ids"] and results["ids"][0]:
                 for i, article_id in enumerate(results["ids"][0]):
-                    output.append({
-                        "id": article_id,
-                        "distance": results["distances"][0][i] if results["distances"] else None,
-                        "similarity": 1 - results["distances"][0][i] if results["distances"] else None,
-                        "metadata": results["metadatas"][0][i] if results["metadatas"] else {},
-                    })
+                    output.append(
+                        {
+                            "id": article_id,
+                            "distance": results["distances"][0][i]
+                            if results["distances"]
+                            else None,
+                            "similarity": 1 - results["distances"][0][i]
+                            if results["distances"]
+                            else None,
+                            "metadata": results["metadatas"][0][i] if results["metadatas"] else {},
+                        }
+                    )
             return output
         except Exception as e:
             logger.error(f"Search failed: {e}")
@@ -237,7 +242,9 @@ class VectorStore:
             if result["ids"]:
                 return {
                     "id": result["ids"][0],
-                    "embedding": np.array(result["embeddings"][0]) if result["embeddings"] else None,
+                    "embedding": np.array(result["embeddings"][0])
+                    if result["embeddings"]
+                    else None,
                     "metadata": result["metadatas"][0] if result["metadatas"] else {},
                 }
         except Exception as e:
@@ -365,9 +372,7 @@ class ArticleIndexer:
             return 0
 
         # Get embeddings
-        article_embeddings = self.embedder.embed_articles(
-            articles, batch_size, show_progress
-        )
+        article_embeddings = self.embedder.embed_articles(articles, batch_size, show_progress)
 
         if not article_embeddings:
             return 0
@@ -384,7 +389,9 @@ class ArticleIndexer:
                     "source_id": article.source_id,
                     "source_name": article.source_name or "",
                     "source_bias": article.source_bias.value if article.source_bias else "",
-                    "published_at": article.published_at.isoformat() if article.published_at else "",
+                    "published_at": article.published_at.isoformat()
+                    if article.published_at
+                    else "",
                     "word_count": article.word_count,
                 }
                 batch.append((article_id, embedding, metadata))

@@ -92,9 +92,7 @@ class ContentTooShortError(QualityError):
     def __init__(self, actual_length: int, min_length: int):
         self.actual_length = actual_length
         self.min_length = min_length
-        super().__init__(
-            f"Content too short: {actual_length} chars (minimum: {min_length})"
-        )
+        super().__init__(f"Content too short: {actual_length} chars (minimum: {min_length})")
 
 
 class InvalidLanguageError(QualityError):
@@ -103,9 +101,7 @@ class InvalidLanguageError(QualityError):
     def __init__(self, detected: str, expected: str = "en"):
         self.detected = detected
         self.expected = expected
-        super().__init__(
-            f"Invalid language: detected '{detected}', expected '{expected}'"
-        )
+        super().__init__(f"Invalid language: detected '{detected}', expected '{expected}'")
 
 
 class AnalysisError(NewsSentimentError):

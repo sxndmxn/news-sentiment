@@ -48,10 +48,7 @@ class TestGetVectorStore:
         assert isinstance(store, VectorStore)
 
 
-@pytest.mark.skipif(
-    not VectorStore().is_available,
-    reason="chromadb not installed"
-)
+@pytest.mark.skipif(not VectorStore().is_available, reason="chromadb not installed")
 class TestVectorStoreWithChroma:
     """Tests that require ChromaDB to be available."""
 

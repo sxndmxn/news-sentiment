@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from news_sentiment.domain.models import Article
-from news_sentiment.domain.value_objects import ContentHash
 from news_sentiment.storage.repositories.article_repo import ArticleRepository
 
 

@@ -70,6 +70,7 @@ class Notifier:
 
         try:
             import apprise
+
             self._apprise = apprise.Apprise()
 
             config = self._load_config()
@@ -80,7 +81,9 @@ class Notifier:
                     url = channel.get("url")
                     if url:
                         self._apprise.add(url)
-                        logger.debug(f"Added notification channel: {channel.get('name', 'unnamed')}")
+                        logger.debug(
+                            f"Added notification channel: {channel.get('name', 'unnamed')}"
+                        )
 
         except ImportError:
             logger.warning("Apprise not installed. Notifications disabled.")

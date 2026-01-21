@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -44,7 +44,7 @@ def version_callback(value: bool) -> None:
 @app.callback()
 def main(
     version: Annotated[
-        Optional[bool],
+        bool | None,
         typer.Option(
             "--version",
             "-v",
@@ -65,7 +65,7 @@ def main(
 @app.command()
 def ingest(
     source: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--source", "-s", help="Specific source slug to ingest."),
     ] = None,
     all_sources: Annotated[
@@ -102,7 +102,7 @@ def ingest(
             sources = [registry.get_source(source)]
         except Exception as e:
             console.print(f"[red]Error:[/red] {e}")
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
     elif all_sources:
         sources = registry.get_active_sources()
     else:
@@ -275,7 +275,7 @@ def analyze(
         typer.Option("--limit", "-l", help="Maximum articles to analyze."),
     ] = 100,
     source: Annotated[
-        Optional[str],
+        str | None,
         typer.Option("--source", "-s", help="Only analyze articles from this source."),
     ] = None,
 ) -> None:
@@ -349,8 +349,12 @@ def analyze(
         recent = sentiment_repo.list_recent(days=1, limit=5)
         for result in recent:
             label = result.sentiment_score.sentiment_label
-            label_style = "green" if label == "positive" else "red" if label == "negative" else "yellow"
-            loaded_ratio = f"{result.loaded_language.loaded_ratio:.1%}" if result.loaded_language else "-"
+            label_style = (
+                "green" if label == "positive" else "red" if label == "negative" else "yellow"
+            )
+            loaded_ratio = (
+                f"{result.loaded_language.loaded_ratio:.1%}" if result.loaded_language else "-"
+            )
 
             title = result.article_title or ""
             table.add_row(
