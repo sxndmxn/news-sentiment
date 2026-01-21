@@ -127,8 +127,9 @@ def ingest(
         for src in sources:
             status.update(f"[bold green]Fetching from {src.name}...")
 
-            # Save source to database
-            source_repo.save(src)
+            # Save source to database and use the persisted source
+            # (ensures article.source_id matches the database source ID)
+            src = source_repo.save(src)
 
             try:
                 articles = parser.fetch_feed(src)
@@ -205,8 +206,12 @@ def status() -> None:
 
     sources = registry.get_active_sources()
     for src in sources:
-        article_count = article_repo.count_by_source(src.id)
-        analyzed_count = sentiment_repo.count_by_source(src.id)
+        # Look up the source from the database to get the correct ID
+        # (registry sources have fresh UUIDs, not the persisted ones)
+        db_source = source_repo.get_by_slug(src.slug)
+        source_id = db_source.id if db_source else src.id
+        article_count = article_repo.count_by_source(source_id)
+        analyzed_count = sentiment_repo.count_by_source(source_id)
         # Check circuit breaker
         cb = cb_registry.get_breaker(src.slug)
         cb_status = cb.state.value.upper()

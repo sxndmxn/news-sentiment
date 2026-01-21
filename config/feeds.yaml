@@ -36,17 +36,17 @@ sources:
 
   - slug: reuters
     name: Reuters
-    feed_url: https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best
+    feed_url: https://news.google.com/rss/search?q=site:reuters.com&hl=en-US&gl=US&ceid=US:en
     website_url: https://www.reuters.com
     bias_label: center
-    description: International wire service, fact-based reporting
+    description: International wire service, fact-based reporting (via Google News)
 
   - slug: apnews
     name: Associated Press
-    feed_url: https://rsshub.app/apnews/topics/apf-topnews
+    feed_url: https://news.google.com/rss/search?q=site:apnews.com&hl=en-US&gl=US&ceid=US:en
     website_url: https://apnews.com
     bias_label: center
-    description: News wire service, factual reporting
+    description: News wire service, factual reporting (via Google News)
 
   - slug: npr
     name: NPR News
