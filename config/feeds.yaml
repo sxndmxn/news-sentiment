@@ -1,0 +1,92 @@
+# News Sources Configuration
+# Each source includes bias classification based on AllSides and Media Bias/Fact Check
+
+sources:
+  # --- LEFT-LEANING SOURCES ---
+
+  - slug: msnbc
+    name: MSNBC
+    feed_url: https://www.msnbc.com/feeds/latest
+    website_url: https://www.msnbc.com
+    bias_label: left
+    description: Left-leaning news and opinion network
+
+  - slug: huffpost
+    name: HuffPost
+    feed_url: https://www.huffpost.com/section/politics/feed
+    website_url: https://www.huffpost.com
+    bias_label: left
+    description: Progressive news and opinion
+
+  - slug: guardian
+    name: The Guardian US
+    feed_url: https://www.theguardian.com/us-news/rss
+    website_url: https://www.theguardian.com/us
+    bias_label: center_left
+    description: UK-based news with US coverage, center-left perspective
+
+  - slug: nytimes
+    name: New York Times
+    feed_url: https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml
+    website_url: https://www.nytimes.com
+    bias_label: center_left
+    description: Major US newspaper, leans center-left
+
+  # --- CENTER SOURCES ---
+
+  - slug: reuters
+    name: Reuters
+    feed_url: https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best
+    website_url: https://www.reuters.com
+    bias_label: center
+    description: International wire service, fact-based reporting
+
+  - slug: apnews
+    name: Associated Press
+    feed_url: https://rsshub.app/apnews/topics/apf-topnews
+    website_url: https://apnews.com
+    bias_label: center
+    description: News wire service, factual reporting
+
+  - slug: npr
+    name: NPR News
+    feed_url: https://feeds.npr.org/1001/rss.xml
+    website_url: https://www.npr.org
+    bias_label: center
+    description: Public radio, generally balanced coverage
+
+  # --- RIGHT-LEANING SOURCES ---
+
+  - slug: wsj
+    name: Wall Street Journal
+    feed_url: https://feeds.a.dj.com/rss/RSSWorldNews.xml
+    website_url: https://www.wsj.com
+    bias_label: center_right
+    description: Business-focused, center-right editorial stance
+
+  - slug: foxnews
+    name: Fox News
+    feed_url: https://moxie.foxnews.com/google-publisher/politics.xml
+    website_url: https://www.foxnews.com
+    bias_label: right
+    description: Conservative news network
+
+  - slug: nypost
+    name: New York Post
+    feed_url: https://nypost.com/feed/
+    website_url: https://nypost.com
+    bias_label: right
+    description: Tabloid newspaper, conservative leaning
+
+# RSS Feed Health Check Settings
+health_check:
+  timeout_seconds: 30
+  retry_attempts: 3
+  retry_delay_seconds: 5
+
+# Ingestion Settings
+ingestion:
+  max_articles_per_source: 50
+  min_content_length: 100
+  max_content_length: 100000
+  fetch_interval_minutes: 60

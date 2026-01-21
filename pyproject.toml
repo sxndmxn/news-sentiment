@@ -1,0 +1,94 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "news-sentiment"
+version = "0.1.0"
+description = "News sentiment analyzer across the political spectrum"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "News Sentiment Team"}
+]
+keywords = ["sentiment", "news", "nlp", "analysis"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "pydantic>=2.0",
+    "sqlalchemy>=2.0",
+    "feedparser>=6.0",
+    "vaderSentiment>=3.3",
+    "spacy>=3.7",
+    "typer>=0.9",
+    "rich>=13.0",
+    "streamlit>=1.28",
+    "apscheduler>=3.10",
+    "apprise>=1.6",
+    "tenacity>=8.2",
+    "pyyaml>=6.0",
+    "httpx>=0.25",
+    "python-dateutil>=2.8",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.1",
+    "mypy>=1.6",
+]
+transformers = [
+    "transformers>=4.35",
+    "torch>=2.1",
+    "sentence-transformers>=2.2",
+]
+vector = [
+    "chromadb>=0.4",
+]
+
+[project.scripts]
+news-sentiment = "news_sentiment.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/news_sentiment"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true

@@ -1,0 +1,42 @@
+# Hedge words - indicate uncertainty or qualification
+# These words often signal the writer is being less definitive
+
+allegedly
+apparently
+arguably
+basically
+conceivably
+essentially
+fairly
+generally
+hopefully
+largely
+likely
+mainly
+maybe
+mostly
+nearly
+often
+overall
+partially
+perhaps
+possibly
+potentially
+practically
+presumably
+probably
+purportedly
+quite
+rather
+relatively
+reportedly
+roughly
+seemingly
+somewhat
+sometimes
+sort of
+kind of
+supposedly
+typically
+usually
+virtually

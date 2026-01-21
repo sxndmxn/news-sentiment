@@ -1,0 +1,89 @@
+# Alert Configuration
+# News Sentiment Analyzer
+
+# Global enable/disable for notifications
+enabled: true
+
+# Notification channels using Apprise URLs
+# See https://github.com/caronc/apprise/wiki for supported services
+channels:
+  # Example: Slack webhook
+  # - name: slack
+  #   url: slack://tokenA/tokenB/tokenC
+  #   enabled: true
+
+  # Example: Discord webhook
+  # - name: discord
+  #   url: discord://webhook_id/webhook_token
+  #   enabled: true
+
+  # Example: Email (SMTP)
+  # - name: email
+  #   url: mailto://user:password@gmail.com?to=recipient@example.com
+  #   enabled: true
+
+  # Example: Telegram
+  # - name: telegram
+  #   url: tgram://bot_token/chat_id
+  #   enabled: true
+
+  # Console logging (always enabled for debugging)
+  - name: console
+    url: json://stdout
+    enabled: true
+
+# Alert rules configuration
+rules:
+  # Sentiment spike detection
+  sentiment_spike:
+    enabled: true
+    threshold: 0.3  # Compound score change
+    level: info
+    lookback_hours: 24
+
+  # Sentiment drop detection
+  sentiment_drop:
+    enabled: true
+    threshold: 0.3  # Compound score change (will be negated)
+    level: warning
+    lookback_hours: 24
+
+  # High negativity alert
+  high_negativity:
+    enabled: true
+    threshold: 0.6  # 60% negative articles
+    level: warning
+    lookback_hours: 24
+
+  # Bias divergence detection
+  bias_divergence:
+    enabled: true
+    threshold: 0.4  # Difference between left and right avg sentiment
+    level: info
+    lookback_hours: 24
+
+  # No data alert
+  no_data:
+    enabled: true
+    threshold: 0  # Trigger if no articles in lookback period
+    level: warning
+    lookback_hours: 24
+
+  # High loaded language
+  high_loaded_language:
+    enabled: true
+    threshold: 0.1  # 10% loaded language ratio
+    level: info
+    lookback_hours: 24
+
+# Quiet hours (suppress non-critical alerts)
+quiet_hours:
+  enabled: false
+  start: "22:00"
+  end: "08:00"
+  timezone: "UTC"
+
+# Rate limiting
+rate_limit:
+  max_alerts_per_hour: 10
+  cooldown_minutes: 30  # Min time between same alert type
