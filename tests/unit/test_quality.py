@@ -140,7 +140,7 @@ class TestQualityPipeline:
 
     def test_content_truncated(self) -> None:
         """Test long content is truncated."""
-        pipeline = QualityPipeline(max_content_length=50)
+        pipeline = QualityPipeline(min_content_length=10, max_content_length=50)
         result = pipeline.validate("x" * 100)
         assert result.is_valid is True
         assert len(result.cleaned_content or "") <= 50
