@@ -1,49 +1,68 @@
-# Agent Build Instructions
+# Build and Run Instructions
 
-## Project Setup
+## Setup
 ```bash
-# Install dependencies (example for Node.js project)
-npm install
+# Create virtual environment (recommended)
+python -m venv .venv
+source .venv/bin/activate
 
-# Or for Python project
-pip install -r requirements.txt
+# Install in development mode
+pip install -e ".[dev]"
 
-# Or for Rust project  
-cargo build
+# Download spaCy model
+python -m spacy download en_core_web_sm
 ```
 
-## Running Tests
+## Run CLI
 ```bash
-# Node.js
-npm test
+# Show help
+news-sentiment --help
 
-# Python
-pytest
+# Ingest from a specific source
+news-sentiment ingest --source nytimes
 
-# Rust
-cargo test
+# Ingest from all sources
+news-sentiment ingest --all
+
+# Analyze recent articles
+news-sentiment analyze --days 1
+
+# Show status
+news-sentiment status
 ```
 
-## Build Commands
+## Run Dashboard
 ```bash
-# Production build
-npm run build
-# or
-cargo build --release
+streamlit run src/news_sentiment/dashboard/app.py
 ```
 
-## Development Server
+## Run Tests
 ```bash
-# Start development server
-npm run dev
-# or
-cargo run
+pytest tests/
 ```
 
-## Key Learnings
-- Update this section when you learn new build optimizations
-- Document any gotchas or special setup requirements
-- Keep track of the fastest test/build cycle
+## Run Linting
+```bash
+ruff check src/
+ruff format src/
+```
+
+## Project Structure
+- `src/news_sentiment/` - Main package
+- `config/` - Configuration files (feeds.yaml, alerts.yaml, lexicons/)
+- `data/` - SQLite database and exports (gitignored)
+- `tests/` - Test suite
+
+## Key Dependencies
+- pydantic>=2.0 - Domain models
+- sqlalchemy>=2.0 - Database ORM
+- feedparser>=6.0 - RSS parsing
+- vaderSentiment>=3.3 - Sentiment analysis
+- spacy>=3.7 - NLP processing
+- typer>=0.9 - CLI framework
+- streamlit>=1.28 - Dashboard
+- apscheduler>=3.10 - Job scheduling
+- apprise>=1.6 - Notifications
 
 ## Feature Development Quality Standards
 
@@ -51,21 +70,11 @@ cargo run
 
 ### Testing Requirements
 
-- **Minimum Coverage**: 85% code coverage ratio required for all new code
 - **Test Pass Rate**: 100% - all tests must pass, no exceptions
 - **Test Types Required**:
-  - Unit tests for all business logic and services
-  - Integration tests for API endpoints or main functionality
-  - End-to-end tests for critical user workflows
-- **Coverage Validation**: Run coverage reports before marking features complete:
-  ```bash
-  # Examples by language/framework
-  npm run test:coverage
-  pytest --cov=src tests/ --cov-report=term-missing
-  cargo tarpaulin --out Html
-  ```
+  - Unit tests for domain logic
+  - Integration tests for ingestion and analysis pipelines
 - **Test Quality**: Tests must validate behavior, not just achieve coverage metrics
-- **Test Documentation**: Complex test scenarios must include comments explaining the test strategy
 
 ### Git Workflow Requirements
 
@@ -76,83 +85,21 @@ Before moving to the next feature, ALL changes must be:
    git add .
    git commit -m "feat(module): descriptive message following conventional commits"
    ```
-   - Use conventional commit format: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, etc.
-   - Include scope when applicable: `feat(api):`, `fix(ui):`, `test(auth):`
-   - Write descriptive messages that explain WHAT changed and WHY
 
-2. **Pushed to Remote Repository**:
-   ```bash
-   git push origin <branch-name>
-   ```
-   - Never leave completed features uncommitted
-   - Push regularly to maintain backup and enable collaboration
-   - Ensure CI/CD pipelines pass before considering feature complete
+2. **Branch Hygiene**:
+   - Work on feature branches when appropriate
+   - Create pull requests for significant changes
 
-3. **Branch Hygiene**:
-   - Work on feature branches, never directly on `main`
-   - Branch naming convention: `feature/<feature-name>`, `fix/<issue-name>`, `docs/<doc-update>`
-   - Create pull requests for all significant changes
-
-4. **Ralph Integration**:
+3. **Ralph Integration**:
    - Update @fix_plan.md with new tasks before starting work
    - Mark items complete in @fix_plan.md upon completion
-   - Update PROMPT.md if development patterns change
-   - Test features work within Ralph's autonomous loop
-
-### Documentation Requirements
-
-**ALL implementation documentation MUST remain synchronized with the codebase**:
-
-1. **Code Documentation**:
-   - Language-appropriate documentation (JSDoc, docstrings, etc.)
-   - Update inline comments when implementation changes
-   - Remove outdated comments immediately
-
-2. **Implementation Documentation**:
-   - Update relevant sections in this AGENT.md file
-   - Keep build and test commands current
-   - Update configuration examples when defaults change
-   - Document breaking changes prominently
-
-3. **README Updates**:
-   - Keep feature lists current
-   - Update setup instructions when dependencies change
-   - Maintain accurate command examples
-   - Update version compatibility information
-
-4. **AGENT.md Maintenance**:
-   - Add new build patterns to relevant sections
-   - Update "Key Learnings" with new insights
-   - Keep command examples accurate and tested
-   - Document new testing patterns or quality gates
 
 ### Feature Completion Checklist
 
 Before marking ANY feature as complete, verify:
 
-- [ ] All tests pass with appropriate framework command
-- [ ] Code coverage meets 85% minimum threshold
-- [ ] Coverage report reviewed for meaningful test quality
-- [ ] Code formatted according to project standards
-- [ ] Type checking passes (if applicable)
-- [ ] All changes committed with conventional commit messages
-- [ ] All commits pushed to remote repository
+- [ ] All tests pass
+- [ ] Code formatted with ruff
+- [ ] Type hints on all functions
+- [ ] All changes committed
 - [ ] @fix_plan.md task marked as complete
-- [ ] Implementation documentation updated
-- [ ] Inline code comments updated or added
-- [ ] AGENT.md updated (if new patterns introduced)
-- [ ] Breaking changes documented
-- [ ] Features tested within Ralph loop (if applicable)
-- [ ] CI/CD pipeline passes
-
-### Rationale
-
-These standards ensure:
-- **Quality**: High test coverage and pass rates prevent regressions
-- **Traceability**: Git commits and @fix_plan.md provide clear history of changes
-- **Maintainability**: Current documentation reduces onboarding time and prevents knowledge loss
-- **Collaboration**: Pushed changes enable team visibility and code review
-- **Reliability**: Consistent quality gates maintain production stability
-- **Automation**: Ralph integration ensures continuous development practices
-
-**Enforcement**: AI agents should automatically apply these standards to all feature development tasks without requiring explicit instruction for each task.

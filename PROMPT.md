@@ -1,39 +1,146 @@
-# Ralph Development Instructions
+# News Sentiment Analyzer
 
-## Context
-You are Ralph, an autonomous AI development agent working on a [YOUR PROJECT NAME] project.
+Build a Python application that analyzes sentiment and linguistic patterns across news sources spanning the political spectrum.
 
-## Current Objectives
-1. Study specs/* to learn about the project specifications
-2. Review @fix_plan.md for current priorities
-3. Implement the highest priority item using best practices
-4. Use parallel subagents for complex tasks (max 100 concurrent)
-5. Run tests after each implementation
-6. Update documentation and fix_plan.md
+## Goal
+Create a CLI + dashboard application that:
+1. Ingests news from RSS feeds across the political spectrum
+2. Analyzes sentiment using VADER (fast) + optional transformers
+3. Detects loaded language (hedges, intensifiers, weasel words)
+4. Tracks historical trends and generates alerts
+5. Provides a Streamlit dashboard for visualization
 
-## Key Principles
-- ONE task per loop - focus on the most important thing
-- Search the codebase before assuming something isn't implemented
-- Use subagents for expensive operations (file searching, analysis)
-- Write comprehensive tests with clear documentation
-- Update @fix_plan.md with your learnings
-- Commit working changes with descriptive messages
+## Project Location
+All code should be created in this directory. Use a `src/news_sentiment/` layout.
 
-## 🧪 Testing Guidelines (CRITICAL)
-- LIMIT testing to ~20% of your total effort per loop
-- PRIORITIZE: Implementation > Documentation > Tests
-- Only write tests for NEW functionality you implement
-- Do NOT refactor existing tests unless broken
-- Do NOT add "additional test coverage" as busy work
-- Focus on CORE functionality first, comprehensive testing later
+## Architectural Principles (MUST FOLLOW)
 
-## Execution Guidelines
-- Before making changes: search codebase using subagents
-- After implementation: run ESSENTIAL tests for the modified code only
-- If tests fail: fix them as part of your current work
-- Keep @AGENT.md updated with build/run instructions
-- Document the WHY behind tests and implementations
-- No placeholder implementations - build it properly
+### Domain-Driven Design
+- Use bounded contexts: Ingestion, Analysis, Reporting, Alerting
+- Create aggregates: Article, SentimentResult, Source
+- Use value objects: BiasLabel, SentimentScore, ContentHash
+
+### Design Patterns
+- **Strategy Pattern**: Analyzer interface with swappable implementations (VADER, Transformer)
+- **Factory Pattern**: Create analyzers based on content domain
+- **Repository Pattern**: Abstract data access behind clean interfaces
+- **Circuit Breaker**: Protect against RSS feed failures (use tenacity)
+
+### Data Engineering
+- **Data Quality**: Validate at ingestion (content length, language, duplicates)
+- **Data Lineage**: Track source → transformation → output for every record
+- **Model Versioning**: Track which model version produced each sentiment score
+
+## Technology Stack
+- Python 3.10+ with src layout
+- SQLAlchemy 2.0 for persistence (SQLite)
+- Pydantic for domain models and validation
+- feedparser for RSS ingestion
+- vaderSentiment for fast sentiment
+- spaCy for NER and text processing
+- Typer + Rich for CLI
+- Streamlit for dashboard
+- APScheduler for job scheduling
+- Apprise for alerts
+
+## Project Structure
+
+```
+src/news_sentiment/
+├── __init__.py
+├── __main__.py
+├── domain/                      # DDD: Core domain models
+│   ├── models.py                # Article, SentimentResult, Entity
+│   ├── events.py                # Domain events
+│   ├── value_objects.py         # BiasLabel, SentimentScore, etc.
+│   └── exceptions.py            # Domain-specific exceptions
+├── ingestion/                   # Bounded Context: Data Ingestion
+│   ├── rss_parser.py            # feedparser wrapper
+│   ├── source_registry.py       # YAML-based feed definitions
+│   ├── deduplication.py         # URL/content hash dedup
+│   ├── quality.py               # Data quality validators
+│   └── circuit_breaker.py       # Resilience for feed fetching
+├── analysis/                    # Bounded Context: NLP Analysis
+│   ├── pipeline.py              # Orchestrator with stage pattern
+│   ├── preprocessor.py          # Text cleaning, chunking
+│   ├── analyzers/               # Strategy pattern implementations
+│   │   ├── base.py              # Abstract analyzer interface
+│   │   ├── vader.py             # Fast lexicon-based
+│   │   ├── transformer.py       # Hugging Face models
+│   │   └── factory.py           # Analyzer factory
+│   ├── lexicon.py               # Loaded language detection
+│   ├── embeddings.py            # Sentence embeddings
+│   └── lineage.py               # Track processing provenance
+├── storage/                     # Infrastructure: Persistence
+│   ├── database.py              # Connection management
+│   ├── repositories/            # Repository pattern
+│   │   ├── article_repo.py
+│   │   ├── sentiment_repo.py
+│   │   └── analytics_repo.py
+│   ├── vector_store.py          # ChromaDB for embeddings
+│   └── migrations/              # Alembic migrations
+├── analytics/                   # Bounded Context: Reporting
+│   ├── aggregator.py            # Daily/weekly summaries
+│   ├── trends.py                # Trend detection
+│   ├── statistics.py            # Statistical analysis
+│   └── exports.py               # CSV, JSON exports
+├── alerts/                      # Bounded Context: Alerting
+│   ├── detector.py              # Threshold monitoring
+│   ├── notifier.py              # Multi-channel dispatch
+│   └── rules.py                 # Alert rule definitions
+├── dashboard/                   # Interface: Web UI
+│   ├── app.py                   # Streamlit entry
+│   └── pages/
+│       ├── overview.py
+│       ├── trends.py
+│       ├── sources.py
+│       └── explorer.py
+├── cli/                         # Interface: Command Line
+│   ├── main.py                  # Typer app
+│   └── commands/
+│       ├── ingest.py
+│       ├── analyze.py
+│       ├── query.py
+│       └── export.py
+└── scheduler/                   # Infrastructure: Job Scheduling
+    ├── jobs.py
+    └── runner.py
+
+config/
+├── feeds.yaml                   # RSS sources with bias labels
+├── alerts.yaml                  # Alert configuration
+├── lexicons/                    # Loaded language word lists
+│   ├── hedges.txt
+│   ├── intensifiers.txt
+│   └── weasel_words.txt
+└── settings.yaml                # App settings
+
+data/                            # Local data (gitignored)
+├── news_sentiment.db
+├── chroma/
+└── exports/
+
+tests/
+├── unit/
+├── integration/
+└── fixtures/
+```
+
+## Quality Standards
+- Type hints on all functions
+- Docstrings on public methods
+- Unit tests for core logic
+- Use ruff for linting
+
+## Task Tracking
+Follow the phased implementation in @fix_plan.md. Complete each phase fully before moving to the next.
+
+## Exit Condition
+The project is complete when:
+1. All phases in @fix_plan.md are checked off
+2. CLI commands work: `news-sentiment ingest`, `news-sentiment analyze`, `news-sentiment status`
+3. Dashboard launches: `streamlit run src/news_sentiment/dashboard/app.py`
+4. At least 5 news sources are configured and working
 
 ## 🎯 Status Reporting (CRITICAL - Ralph needs this!)
 
@@ -57,225 +164,5 @@ Set EXIT_SIGNAL to **true** when ALL of these conditions are met:
 1. ✅ All items in @fix_plan.md are marked [x]
 2. ✅ All tests are passing (or no tests exist for valid reasons)
 3. ✅ No errors or warnings in the last execution
-4. ✅ All requirements from specs/ are implemented
+4. ✅ CLI commands work and dashboard launches
 5. ✅ You have nothing meaningful left to implement
-
-### Examples of proper status reporting:
-
-**Example 1: Work in progress**
-```
----RALPH_STATUS---
-STATUS: IN_PROGRESS
-TASKS_COMPLETED_THIS_LOOP: 2
-FILES_MODIFIED: 5
-TESTS_STATUS: PASSING
-WORK_TYPE: IMPLEMENTATION
-EXIT_SIGNAL: false
-RECOMMENDATION: Continue with next priority task from @fix_plan.md
----END_RALPH_STATUS---
-```
-
-**Example 2: Project complete**
-```
----RALPH_STATUS---
-STATUS: COMPLETE
-TASKS_COMPLETED_THIS_LOOP: 1
-FILES_MODIFIED: 1
-TESTS_STATUS: PASSING
-WORK_TYPE: DOCUMENTATION
-EXIT_SIGNAL: true
-RECOMMENDATION: All requirements met, project ready for review
----END_RALPH_STATUS---
-```
-
-**Example 3: Stuck/blocked**
-```
----RALPH_STATUS---
-STATUS: BLOCKED
-TASKS_COMPLETED_THIS_LOOP: 0
-FILES_MODIFIED: 0
-TESTS_STATUS: FAILING
-WORK_TYPE: DEBUGGING
-EXIT_SIGNAL: false
-RECOMMENDATION: Need human help - same error for 3 loops
----END_RALPH_STATUS---
-```
-
-### What NOT to do:
-- ❌ Do NOT continue with busy work when EXIT_SIGNAL should be true
-- ❌ Do NOT run tests repeatedly without implementing new features
-- ❌ Do NOT refactor code that is already working fine
-- ❌ Do NOT add features not in the specifications
-- ❌ Do NOT forget to include the status block (Ralph depends on it!)
-
-## 📋 Exit Scenarios (Specification by Example)
-
-Ralph's circuit breaker and response analyzer use these scenarios to detect completion.
-Each scenario shows the exact conditions and expected behavior.
-
-### Scenario 1: Successful Project Completion
-**Given**:
-- All items in @fix_plan.md are marked [x]
-- Last test run shows all tests passing
-- No errors in recent logs/
-- All requirements from specs/ are implemented
-
-**When**: You evaluate project status at end of loop
-
-**Then**: You must output:
-```
----RALPH_STATUS---
-STATUS: COMPLETE
-TASKS_COMPLETED_THIS_LOOP: 1
-FILES_MODIFIED: 1
-TESTS_STATUS: PASSING
-WORK_TYPE: DOCUMENTATION
-EXIT_SIGNAL: true
-RECOMMENDATION: All requirements met, project ready for review
----END_RALPH_STATUS---
-```
-
-**Ralph's Action**: Detects EXIT_SIGNAL=true, gracefully exits loop with success message
-
----
-
-### Scenario 2: Test-Only Loop Detected
-**Given**:
-- Last 3 loops only executed tests (npm test, bats, pytest, etc.)
-- No new files were created
-- No existing files were modified
-- No implementation work was performed
-
-**When**: You start a new loop iteration
-
-**Then**: You must output:
-```
----RALPH_STATUS---
-STATUS: IN_PROGRESS
-TASKS_COMPLETED_THIS_LOOP: 0
-FILES_MODIFIED: 0
-TESTS_STATUS: PASSING
-WORK_TYPE: TESTING
-EXIT_SIGNAL: false
-RECOMMENDATION: All tests passing, no implementation needed
----END_RALPH_STATUS---
-```
-
-**Ralph's Action**: Increments test_only_loops counter, exits after 3 consecutive test-only loops
-
----
-
-### Scenario 3: Stuck on Recurring Error
-**Given**:
-- Same error appears in last 5 consecutive loops
-- No progress on fixing the error
-- Error message is identical or very similar
-
-**When**: You encounter the same error again
-
-**Then**: You must output:
-```
----RALPH_STATUS---
-STATUS: BLOCKED
-TASKS_COMPLETED_THIS_LOOP: 0
-FILES_MODIFIED: 2
-TESTS_STATUS: FAILING
-WORK_TYPE: DEBUGGING
-EXIT_SIGNAL: false
-RECOMMENDATION: Stuck on [error description] - human intervention needed
----END_RALPH_STATUS---
-```
-
-**Ralph's Action**: Circuit breaker detects repeated errors, opens circuit after 5 loops
-
----
-
-### Scenario 4: No Work Remaining
-**Given**:
-- All tasks in @fix_plan.md are complete
-- You analyze specs/ and find nothing new to implement
-- Code quality is acceptable
-- Tests are passing
-
-**When**: You search for work to do and find none
-
-**Then**: You must output:
-```
----RALPH_STATUS---
-STATUS: COMPLETE
-TASKS_COMPLETED_THIS_LOOP: 0
-FILES_MODIFIED: 0
-TESTS_STATUS: PASSING
-WORK_TYPE: DOCUMENTATION
-EXIT_SIGNAL: true
-RECOMMENDATION: No remaining work, all specs implemented
----END_RALPH_STATUS---
-```
-
-**Ralph's Action**: Detects completion signal, exits loop immediately
-
----
-
-### Scenario 5: Making Progress
-**Given**:
-- Tasks remain in @fix_plan.md
-- Implementation is underway
-- Files are being modified
-- Tests are passing or being fixed
-
-**When**: You complete a task successfully
-
-**Then**: You must output:
-```
----RALPH_STATUS---
-STATUS: IN_PROGRESS
-TASKS_COMPLETED_THIS_LOOP: 3
-FILES_MODIFIED: 7
-TESTS_STATUS: PASSING
-WORK_TYPE: IMPLEMENTATION
-EXIT_SIGNAL: false
-RECOMMENDATION: Continue with next task from @fix_plan.md
----END_RALPH_STATUS---
-```
-
-**Ralph's Action**: Continues loop, circuit breaker stays CLOSED (normal operation)
-
----
-
-### Scenario 6: Blocked on External Dependency
-**Given**:
-- Task requires external API, library, or human decision
-- Cannot proceed without missing information
-- Have tried reasonable workarounds
-
-**When**: You identify the blocker
-
-**Then**: You must output:
-```
----RALPH_STATUS---
-STATUS: BLOCKED
-TASKS_COMPLETED_THIS_LOOP: 0
-FILES_MODIFIED: 0
-TESTS_STATUS: NOT_RUN
-WORK_TYPE: IMPLEMENTATION
-EXIT_SIGNAL: false
-RECOMMENDATION: Blocked on [specific dependency] - need [what's needed]
----END_RALPH_STATUS---
-```
-
-**Ralph's Action**: Logs blocker, may exit after multiple blocked loops
-
----
-
-## File Structure
-- specs/: Project specifications and requirements
-- src/: Source code implementation  
-- examples/: Example usage and test cases
-- @fix_plan.md: Prioritized TODO list
-- @AGENT.md: Project build and run instructions
-
-## Current Task
-Follow @fix_plan.md and choose the most important item to implement next.
-Use your judgment to prioritize what will have the biggest impact on project progress.
-
-Remember: Quality over speed. Build it right the first time. Know when you're done.
