@@ -32,6 +32,27 @@ sources:
     bias_label: center_left
     description: Major US newspaper, leans center-left
 
+  - slug: motherjones
+    name: Mother Jones
+    feed_url: https://www.motherjones.com/feed/
+    website_url: https://www.motherjones.com
+    bias_label: left
+    description: Progressive investigative journalism
+
+  - slug: theatlantic
+    name: The Atlantic
+    feed_url: https://www.theatlantic.com/feed/all/
+    website_url: https://www.theatlantic.com
+    bias_label: center_left
+    description: Long-form journalism, center-left perspective
+
+  - slug: vox
+    name: Vox
+    feed_url: https://www.vox.com/rss/index.xml
+    website_url: https://www.vox.com
+    bias_label: left
+    description: Explanatory journalism with progressive lens
+
   # --- CENTER SOURCES ---
 
   - slug: reuters
@@ -55,6 +76,27 @@ sources:
     bias_label: center
     description: Public radio, generally balanced coverage
 
+  - slug: bbc
+    name: BBC News
+    feed_url: https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml
+    website_url: https://www.bbc.com/news
+    bias_label: center
+    description: British public broadcaster, balanced international coverage
+
+  - slug: axios
+    name: Axios
+    feed_url: https://api.axios.com/feed/
+    website_url: https://www.axios.com
+    bias_label: center
+    description: Smart brevity news format
+
+  - slug: thehill
+    name: The Hill
+    feed_url: https://thehill.com/feed/
+    website_url: https://thehill.com
+    bias_label: center
+    description: Political journalism, moderate perspective
+
   # --- RIGHT-LEANING SOURCES ---
 
   - slug: wsj
@@ -77,6 +119,27 @@ sources:
     website_url: https://nypost.com
     bias_label: right
     description: Tabloid newspaper, conservative leaning
+
+  - slug: dailywire
+    name: Daily Wire
+    feed_url: https://www.dailywire.com/feeds/rss.xml
+    website_url: https://www.dailywire.com
+    bias_label: right
+    description: Conservative news and commentary
+
+  - slug: nationalreview
+    name: National Review
+    feed_url: https://www.nationalreview.com/feed/
+    website_url: https://www.nationalreview.com
+    bias_label: right
+    description: Conservative commentary magazine
+
+  - slug: washingtontimes
+    name: Washington Times
+    feed_url: https://www.washingtontimes.com/rss/headlines/news/politics/
+    website_url: https://www.washingtontimes.com
+    bias_label: right
+    description: Conservative newspaper based in Washington DC
 
 # RSS Feed Health Check Settings
 health_check:

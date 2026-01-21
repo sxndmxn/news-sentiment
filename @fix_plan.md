@@ -41,21 +41,23 @@
 - [x] Test: scheduler runs, dashboard shows data
 
 ## Phase 4: Semantic Search (Optional - skip if time constrained)
-- [ ] Add sentence-transformers dependency
-- [ ] Implement analysis/embeddings.py
-- [ ] Implement storage/vector_store.py (ChromaDB)
-- [ ] Test: semantic search works
+- [x] Add sentence-transformers dependency
+- [x] Implement analysis/embeddings.py
+- [x] Implement storage/vector_store.py (ChromaDB)
+- [x] Test: semantic search works
 
 ## Phase 5: Alerts + Polish
-- [ ] Implement alerts/detector.py
-- [ ] Implement alerts/notifier.py (Apprise)
-- [ ] Create config/alerts.yaml
-- [ ] Implement analytics/exports.py (CSV, JSON)
-- [ ] Add more sources (total 18+)
-- [ ] Final testing and documentation
+- [x] Implement alerts/detector.py
+- [x] Implement alerts/notifier.py (Apprise)
+- [x] Create config/alerts.yaml
+- [x] Implement analytics/exports.py (CSV, JSON)
+- [x] Add more sources (total 18+)
+- [x] Final testing and documentation
 
 ## Completed
 - [x] Project initialization
 - [x] Phase 1: Foundation (Domain + Infrastructure)
 - [x] Phase 2: Analysis Pipeline (Strategy + Lineage)
 - [x] Phase 3: Persistence + Aggregation
+- [x] Phase 4: Semantic Search
+- [x] Phase 5: Alerts + Polish
