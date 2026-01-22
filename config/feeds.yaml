@@ -53,6 +53,20 @@ sources:
     bias_label: left
     description: Explanatory journalism with progressive lens
 
+  - slug: cnn
+    name: CNN
+    feed_url: https://rss.cnn.com/rss/cnn_allpolitics.rss
+    website_url: https://www.cnn.com
+    bias_label: center_left
+    description: Major cable news network, generally center-left
+
+  - slug: slate
+    name: Slate
+    feed_url: https://slate.com/feeds/all.rss
+    website_url: https://slate.com
+    bias_label: left
+    description: Politics and culture commentary, left-leaning
+
   # --- CENTER SOURCES ---
 
   - slug: reuters
@@ -97,6 +111,20 @@ sources:
     bias_label: center
     description: Political journalism, moderate perspective
 
+  - slug: pbs
+    name: PBS NewsHour
+    feed_url: https://www.pbs.org/newshour/feeds/rss/
+    website_url: https://www.pbs.org/newshour
+    bias_label: center
+    description: Public television news, generally balanced
+
+  - slug: usatoday
+    name: USA Today
+    feed_url: https://rssfeeds.usatoday.com/usatoday-NewsTopStories
+    website_url: https://www.usatoday.com
+    bias_label: center
+    description: National newspaper, mainstream coverage
+
   # --- RIGHT-LEANING SOURCES ---
 
   - slug: wsj
@@ -105,6 +133,20 @@ sources:
     website_url: https://www.wsj.com
     bias_label: center_right
     description: Business-focused, center-right editorial stance
+
+  - slug: washingtonexaminer
+    name: Washington Examiner
+    feed_url: https://www.washingtonexaminer.com/rss.xml
+    website_url: https://www.washingtonexaminer.com
+    bias_label: center_right
+    description: Conservative-leaning political news and commentary
+
+  - slug: breitbart
+    name: Breitbart
+    feed_url: https://www.breitbart.com/feed/
+    website_url: https://www.breitbart.com
+    bias_label: right
+    description: Conservative news and opinion site
 
   - slug: foxnews
     name: Fox News
