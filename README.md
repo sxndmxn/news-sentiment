@@ -10,6 +10,11 @@ Streamlit dashboard for exploration.
 - Detects loaded language (hedges, intensifiers, weasel words).
 - Shows trends and source comparisons in a dashboard.
 
+## Requirements
+
+Use Python 3.10 or newer.
+Run the setup commands from the repository root.
+
 ## Quickstart (uv)
 1. Install dependencies:
    ```bash
